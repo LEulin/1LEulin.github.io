@@ -1,12 +1,12 @@
 
 $(document).ready(function () {
 	var SubscribedTopics = [];
+	$("#status").text("Disconnected");
 	$('#btn-connect').click(function () {
 		var address = $("#broker_input").val()
 		client = mqtt.connect(address);
-		client.subscribe($("#topic").val());
 		console.log('connect button clicked');
-		$("#status").text("Connecting");
+		$("#status").text("Connecting...");
 		$("#status").removeClass("alert-secondary");
 		$("#status").addClass("alert-warning");
 		client.on("connect", function () {
@@ -24,6 +24,17 @@ $(document).ready(function () {
 		})
 		console.log("Connected");
 
+
+		client.on("message", function (topic, payload) {
+			console.log([topic, payload].join(": "));
+			var row = $("<tr>");
+			$("<td>").text(topic).appendTo($(row));
+			$("<td>").text(payload).appendTo($(row));
+			$("<td>").text(moment().format('MMMM Do YYYY, h:mm:ss a')).appendTo($(row));
+			$("#tbl-body").append($(row));
+		})
+
+
 		$(".btn-disconnect").click(function () {
 			Swal.fire({
 				title: 'Are you sure?',
@@ -36,16 +47,17 @@ $(document).ready(function () {
 			}).then((result) => {
 				if (result.value) {
 					client.end();
-					$("#status").text("Disconnected");
+					Swal.fire(
+						'Disconnected!',
+						'Your are disconnected to the broker.',
+						'success'
+					);
+					$("#status").text("Disconnected.");
 					$("#status").removeClass("alert-warning");
 					$("#status").addClass("alert-secondary");
 				}
 			});
-			Swal.fire(
-				'Disconnected!',
-				'Your are disconnected to the broker.',
-				'success'
-			);
+			
 			console.log("Disconnected")
 
 		});
@@ -106,27 +118,21 @@ $(document).ready(function () {
 						type: 'success',
 						title: 'Subscribed Successfully!'
 					});
-				}else{
+				} else {
 					Swal.fire({
-						type:"info",
-						title : "Already Subscribed!"
+						type: "info",
+						title: "Already Subscribed!"
 					})
 				}
 			}
 		});
+		$("#tbl-body").append($(row));
 
 		$("#btn-unsub").click(function () {
 			$("#topic-sub").val("");
 			$("#mysub").remove();
 			Swal.fire("success", "Unsubscribed successfully")
 		})
-		client.on("message", function (topic, payload) {
-			console.log([topic, payload].join(": "));
-			var row = $("<tr>");
-			$("<td>").text(topic).appendTo($(row));
-			$("<td>").text(payload).appendTo($(row));
-			$("<td>").text(moment().format('MMMM Do YYYY, h:mm:ss a')).appendTo($(row));
-		})
-		// $("#tbl-body").append($(row));
+
 	});
 });
