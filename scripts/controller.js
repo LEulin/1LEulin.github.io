@@ -1,6 +1,7 @@
 
 $(document).ready(function () {
 	var SubscribedTopics = [];
+	var PublishedTopics = [];
 	$("#status").text("Disconnected");
 	$('#btn-connect').click(function () {
 		var address = $("#broker_input").val()
@@ -23,8 +24,6 @@ $(document).ready(function () {
 			timer: 1500
 		})
 		console.log("Connected");
-
-
 		client.on("message", function (topic, payload) {
 			console.log([topic, payload].join(": "));
 			var row = $("<tr>");
@@ -59,8 +58,6 @@ $(document).ready(function () {
 				}
 			});
 
-
-
 		});
 
 		$("#btn-pub").click(function () {
@@ -73,6 +70,12 @@ $(document).ready(function () {
 					title: 'Oops...',
 					text: 'Please provide inputs!',
 				});
+			}else if(PublishedTopics.includes(topic)){
+				Swal.fire({
+					type: 'error',
+					title: 'Oops...',
+					text: 'You already published this topic',
+				});
 			}
 			else {
 				client.publish(topic, payload, function (err) {
@@ -83,6 +86,7 @@ $(document).ready(function () {
 							text: 'An error occurs!',
 						});
 					} else {
+						PublishedTopics.push(topic);
 						console.log("Published")
 						Swal.fire('Published successfully!')
 
