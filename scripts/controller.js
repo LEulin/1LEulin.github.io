@@ -6,7 +6,7 @@ $(document).ready(function () {
 	$('#btn-connect').click(function () {
 		var address = $("#broker_input").val()
 		client = mqtt.connect(address);
-		console.log('connect button clicked');
+		console.log('Connect button clicked');
 		$("#status").text("Connecting...");
 		$("#status").removeClass("alert-secondary");
 		$("#status").addClass("alert-warning");
