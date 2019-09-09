@@ -55,10 +55,11 @@ $(document).ready(function () {
 					$("#status").text("Disconnected.");
 					$("#status").removeClass("alert-warning");
 					$("#status").addClass("alert-secondary");
+					console.log("Disconnected")
 				}
 			});
 			
-			console.log("Disconnected")
+			
 
 		});
 
@@ -126,8 +127,6 @@ $(document).ready(function () {
 				}
 			}
 		});
-		$("#tbl-body").append($(row));
-
 		$("#btn-unsub").click(function () {
 			$("#topic-sub").val("");
 			$("#mysub").remove();
